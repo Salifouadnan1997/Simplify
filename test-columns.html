@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { background: #e2e8f0; padding: 40px; margin: 0; font-family: sans-serif; display: flex; }
+  
+  .editor-wrapper {
+    /* The wrapper will grow in width as columns are added */
+    /* Background paints the "pages" */
+    background-image: linear-gradient(to right, white 0px, white 800px, transparent 800px, transparent 832px);
+    background-size: 832px 1122px; /* 800px page + 32px gap */
+    background-repeat: repeat-x;
+    
+    height: 1122px;
+    min-width: 800px; /* at least one page */
+    
+    /* Box shadow to make it look like pages. A bit tricky with repeating background, 
+       but we can use filter: drop-shadow */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    
+    padding: 0;
+    margin: 0;
+  }
+  
+  .document-container {
+    height: 1122px; /* A4 height at 96dpi approx */
+    column-width: 800px; /* Page width */
+    column-gap: 32px; /* Space between pages */
+    column-fill: auto;
+    
+    outline: none;
+    padding: 48px; /* inner margin of the text */
+    margin: 0;
+    box-sizing: border-box;
+  }
+</style>
+</head>
+<body>
+  <div class="editor-wrapper">
+    <div class="document-container" contenteditable="true">
+      <h1>Title</h1>
+      <p style="margin-bottom: 900px;">Start typing here...</p>
+      <p>This should appear on the second page!</p>
+    </div>
+  </div>
+</body>
+</html>

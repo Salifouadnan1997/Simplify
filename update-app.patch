@@ -1,0 +1,108 @@
+--- src/App.tsx
++++ src/App.tsx
+@@ -2,12 +2,14 @@
+ import { 
+-  getSavedDocuments, 
+-  saveDocument, 
+-  deleteDocument, 
+   createNewBlankDocument, 
+   isSupabaseConfigured 
+ } from "./utils";
++import {
++  getSavedDocuments,
++  saveDocument,
++  deleteDocument,
++} from "./lib/syncService";
+ import { SmartDocument, DocumentSignature, DocumentStyleSettings, SaisieTab } from "./types";
+ import DocumentEditor from "./components/DocumentEditor";
+@@ -71,15 +73,15 @@
+     initApp();
+ 
+-    const saved = getSavedDocuments();
+-    if (saved.length > 0) {
+-      setDocuments(saved);
+-      setActiveDocId(saved[0].id);
+-    } else {
+-      const blank = createNewBlankDocument("Nouveau Contrat de Prestation");
+-      const updated = saveDocument(blank);
+-      setDocuments(updated);
+-      setActiveDocId(blank.id);
+-    }
++    const loadDocs = async () => {
++      const saved = await getSavedDocuments();
++      if (saved.length > 0) {
++        setDocuments(saved);
++        setActiveDocId(saved[0].id);
++      } else {
++        const blank = createNewBlankDocument("Nouveau Contrat de Prestation");
++        const updated = await saveDocument(blank);
++        setDocuments(updated);
++        setActiveDocId(blank.id);
++      }
++    };
++    loadDocs();
+ 
+@@ -95,43 +97,43 @@
+ 
+   // Save the current document state and refresh the document collection
+-  const handleUpdateContent = (content: string) => {
++  const handleUpdateContent = async (content: string) => {
+     if (!activeDoc) return;
+     const updated = { ...activeDoc, content };
+-    const newList = saveDocument(updated);
++    const newList = await saveDocument(updated);
+     setDocuments(newList);
+   };
+ 
+-  const handleUpdateTitle = (title: string) => {
++  const handleUpdateTitle = async (title: string) => {
+     if (!activeDoc) return;
+     const updated = { ...activeDoc, title };
+-    const newList = saveDocument(updated);
++    const newList = await saveDocument(updated);
+     setDocuments(newList);
+   };
+ 
+-  const handleUpdateStyle = (styleSettings: DocumentStyleSettings) => {
++  const handleUpdateStyle = async (styleSettings: DocumentStyleSettings) => {
+     if (!activeDoc) return;
+     const updated = { ...activeDoc, styleSettings };
+-    const newList = saveDocument(updated);
++    const newList = await saveDocument(updated);
+     setDocuments(newList);
+   };
+ 
+-  const handleUpdateSignatures = (signatures: DocumentSignature[]) => {
++  const handleUpdateSignatures = async (signatures: DocumentSignature[]) => {
+     if (!activeDoc) return;
+     const updated = { ...activeDoc, signatures };
+-    const newList = saveDocument(updated);
++    const newList = await saveDocument(updated);
+     setDocuments(newList);
+   };
+ 
+-  const handleCreateNewDocument = () => {
++  const handleCreateNewDocument = async () => {
+     const newDoc = createNewBlankDocument();
+-    const newList = saveDocument(newDoc);
++    const newList = await saveDocument(newDoc);
+     setDocuments(newList);
+     setActiveDocId(newDoc.id);
+     setActiveTab("dictation");
+   };
+ 
+-  const handleDeleteDocument = () => {
++  const handleDeleteDocument = async () => {
+     if (!activeDoc) return;
+-    const newList = deleteDocument(activeDoc.id);
++    const newList = await deleteDocument(activeDoc.id);
+     setDocuments(newList);
+     if (newList.length > 0) {
+       setActiveDocId(newList[0].id);
+     } else {
+       const blank = createNewBlankDocument();
+-      const resetList = saveDocument(blank);
++      const resetList = await saveDocument(blank);
+       setDocuments(resetList);
+       setActiveDocId(blank.id);
+     }

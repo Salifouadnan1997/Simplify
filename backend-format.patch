@@ -1,0 +1,84 @@
+--- server.ts
++++ server.ts
+@@ -10,6 +10,8 @@
+ import { Pool } from 'pg';
+ import multer from 'multer';
+ import { v4 as uuidv4 } from 'uuid';
++import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
++import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+ 
+ const app = express();
+ const PORT = 3000;
+@@ -822,6 +824,80 @@
+   }
+ });
+ 
++// Format generation
++app.post("/api/format/generate", async (req, res) => {
++  try {
++    const { text, format, style, size } = req.body;
++    
++    if (!text || !format) {
++      return res.status(400).json({ error: "Texte et format requis." });
++    }
++
++    if (format === "docx") {
++      const doc = new Document({
++        sections: [{
++          properties: {},
++          children: text.split('\n').map((line: string) => {
++            if (line.startsWith('# ')) {
++              return new Paragraph({ text: line.replace('# ', ''), heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER });
++            } else if (line.startsWith('## ')) {
++              return new Paragraph({ text: line.replace('## ', ''), heading: HeadingLevel.HEADING_2 });
++            } else if (line === '') {
++              return new Paragraph({ text: '' });
++            }
++            return new Paragraph({
++              children: [new TextRun({ text: line, size: size === "large" ? 28 : size === "small" ? 20 : 24 })]
++            });
++          })
++        }]
++      });
++
++      const b64string = await Packer.toBase64String(doc);
++      return res.json({ fileData: b64string, mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileName: "document.docx" });
++    } else if (format === "pdf") {
++      const pdfDoc = await PDFDocument.create();
++      let page = pdfDoc.addPage();
++      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
++      const { width, height } = page.getSize();
++      
++      let y = height - 50;
++      const fontSize = size === "large" ? 14 : size === "small" ? 10 : 12;
++      
++      const lines = text.split('\n');
++      for (const line of lines) {
++        if (y < 50) {
++          page = pdfDoc.addPage();
++          y = height - 50;
++        }
++        page.drawText(line, {
++          x: 50,
++          y,
++          size: line.startsWith('#') ? fontSize + 4 : fontSize,
++          font,
++          color: rgb(0, 0, 0),
++        });
++        y -= (line.startsWith('#') ? fontSize + 10 : fontSize + 5);
++      }
++      
++      const pdfBytes = await pdfDoc.saveAsBase64();
++      return res.json({ fileData: pdfBytes, mimeType: "application/pdf", fileName: "document.pdf" });
++    } else {
++      return res.status(400).json({ error: "Format non supporté." });
++    }
++  } catch (error: any) {
++    console.error("Format generate error:", error);
++    res.status(500).json({ error: "Erreur lors de la génération du fichier." });
++  }
++});
++
+ // Vite middleware for development
+ if (process.env.NODE_ENV !== "production") {
+   import("vite").then(async (vite) => {

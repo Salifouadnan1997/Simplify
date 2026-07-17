@@ -1,0 +1,6 @@
+{
+  "name": "Simplify",
+  "description": "Outil professionnel de saisie intelligente automatique : saisie vocale synchronisée, OCR intelligent, personnalisation automatique de documents et signature numérique avec suppression d'arrière-plan.",
+  "requestFramePermissions": ["microphone", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

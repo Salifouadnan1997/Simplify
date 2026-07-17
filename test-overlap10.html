@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { background: #e2e8f0; padding: 40px; margin: 0; font-family: sans-serif; display: flex; overflow-x: auto; }
+  .document-container {
+    height: 1122px; /* A4 height at 96dpi approx */
+    column-width: 794px; /* A4 width */
+    column-gap: 40px; /* Space between pages */
+    column-fill: auto;
+    outline: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* We use a wrapper to provide the page backgrounds! */
+  .paper-wrapper {
+    position: relative;
+    padding: 48px; /* Internal margin of the paper */
+    background: repeating-linear-gradient(
+      to right,
+      white 0,
+      white 794px,
+      transparent 794px,
+      transparent calc(794px + 40px)
+    );
+    background-size: calc(794px + 40px) 1122px;
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    
+    /* Box shadow is tricky, we can use a drop-shadow filter on the wrapper! */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    height: 1122px;
+    box-sizing: border-box;
+  }
+</style>
+</head>
+<body>
+  <div class="paper-wrapper">
+    <div class="document-container" contenteditable="true">
+      <h1>Title</h1>
+      <p style="margin-bottom: 900px;">Start typing here...</p>
+      <p>This should appear on the second page!</p>
+    </div>
+  </div>
+</body>
+</html>

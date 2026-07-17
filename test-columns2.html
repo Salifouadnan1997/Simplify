@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { background: #e2e8f0; padding: 40px; margin: 0; font-family: sans-serif; display: flex; overflow-x: auto; }
+  
+  .editor-wrapper {
+    /* The wrapper will grow in width as columns are added */
+    background: repeating-linear-gradient(to right, white 0, white 800px, transparent 800px, transparent 832px);
+    
+    height: 1122px;
+    min-width: 800px; /* at least one page */
+    
+    /* drop-shadow works on the transparent parts! */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+    
+    box-sizing: border-box;
+    padding-left: 48px;
+    /* padding-right might not be respected by browser scroll width, but let's try */
+    padding-right: 48px;
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  
+  .document-container {
+    height: 1026px; /* 1122 - 48 - 48 */
+    column-width: 704px; /* 800 - 48 - 48 */
+    column-gap: 128px; /* 48 + 32 + 48 */
+    column-fill: auto;
+    
+    outline: none;
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+  <div class="editor-wrapper">
+    <div class="document-container" contenteditable="true">
+      <h1>Title</h1>
+      <p style="margin-bottom: 900px;">Start typing here...</p>
+      <p>This should appear on the second page!</p>
+    </div>
+  </div>
+</body>
+</html>

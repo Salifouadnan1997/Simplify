@@ -1,0 +1,55 @@
+--- server.ts
++++ server.ts
+@@ -658,6 +658,47 @@
+   }
+ });
+ 
++// 1.b Manuscrit Intelligent via Gemini 3.5 Flash
++app.post("/api/gemini/handwriting", async (req, res) => {
++  try {
++    const { image, mimeType } = req.body;
++    if (!image) {
++      return res.status(400).json({ error: "Aucune image fournie." });
++    }
++
++    const ai = getGeminiClient();
++    const systemPrompt = \`Vous êtes un expert en transcription de textes manuscrits.
++Votre tâche est de lire attentivement l'image contenant du texte manuscrit (sur papier, cahier, tableau) et de le transcrire avec la plus grande précision.
++Même si l'écriture est difficile à lire, essayez de déduire le sens du contexte. 
++Si des mots sont totalement illisibles, indiquez-le avec [illisible].
++Structurez la sortie sous format JSON.\`;
++
++    const cleanBase64 = image.replace(/^data:image\/\w+;base64,/, "");
++
++    const response = await ai.models.generateContent({
++      model: "gemini-3.5-flash",
++      contents: [
++        {
++          inlineData: {
++            mimeType: mimeType || "image/png",
++            data: cleanBase64,
++          },
++        },
++        systemPrompt,
++      ],
++      config: {
++        responseMimeType: "application/json",
++        responseSchema: {
++          type: Type.OBJECT,
++          properties: {
++            text: { type: Type.STRING, description: "Le texte manuscrit transcrit dans son intégralité, en respectant les sauts de ligne si possible." },
++            confidence: { type: Type.STRING, description: "Votre niveau de confiance global (élevé, moyen, faible)." }
++          },
++          required: ["text"]
++        }
++      }
++    });
++
++    res.json(JSON.parse(response.text || "{}"));
++  } catch (error: any) {
++    console.error("Erreur Manuscrit:", error);
++    res.status(500).json({ error: error.message || "Erreur lors de la transcription du manuscrit." });
++  }
++});
++
+ // 2. Autocomplétion et suggestion (Generative Fill)

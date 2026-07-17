@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Montserrat:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=Caveat:wght@400;700&family=Cinzel:wght@400;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom Canva animations */
+@keyframes canva-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes canva-slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes canva-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes canva-typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.animate-canva-fade {
+  animation: canva-fade 1s ease-out forwards;
+}
+
+.animate-canva-slide-up {
+  animation: canva-slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-canva-bounce {
+  animation: canva-bounce 2s infinite ease-in-out;
+}
+
+.animate-canva-typewriter {
+  overflow: hidden;
+  white-space: pre-wrap;
+  animation: canva-fade 1.5s ease-out forwards;
+}
+
